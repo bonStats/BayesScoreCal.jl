@@ -1,4 +1,6 @@
-# Bayesian Score Calibration
+# BayesScoreCal.jl: Bayesian Score Calibration
+
+An extensible implementation of the methods described in [Bayesian score calibration for approximate models](https://arxiv.org/abs/2211.05357)
 
 This repository is a work in progress. It currently it contains
 
