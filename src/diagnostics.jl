@@ -10,6 +10,8 @@ vec2interval(x::Vector{<:Real}) = Interval(x[1], x[2])
 
 vquantile(x::AbstractVector{T}, p::Vector{<:Real}) where {T<:Vector}= [vec2interval(quantile(getindex.(x, i), p)) for i in eachindex(x[1])]
 
+vquantile(x::AbstractVector{T}, p::Vector{<:Real}) where {T<:Real}= vec2interval(quantile(x, p))
+
 function vquantin(x::AbstractVector{T}, p::Real, v::T) where T
     v .∈ vquantile(x, credprob2ends(p)) 
 end

@@ -13,11 +13,12 @@ include("calibration.jl")
 include("energy-score.jl")
 include("diagnostics.jl")
 include("transforms/cholesky-affine.jl")
-
+include("transforms/uni-affine.jl")
 
 export Transform
 export Calibration
 export CholeskyAffine
+export UnivariateAffine
 export energyscorecalibrate!
 export coverage, rmse, bias
 

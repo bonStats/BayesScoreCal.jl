@@ -33,6 +33,8 @@ function update!(chaf::CholeskyAffine, vLb::Vector{<:Real})
     return chaf
 end
 
+scaleparamvec(tf::CholeskyAffine) = chol2vec(tf.L)
+biasparamvec(tf::CholeskyAffine) = tf.b
 paramvec(tf::CholeskyAffine) = [chol2vec(tf.L); tf.b]
 
 (chaf::CholeskyAffine)(x::T, μs::T) where {T} = chaf.L * (x - μs) + μs + chaf.b 
