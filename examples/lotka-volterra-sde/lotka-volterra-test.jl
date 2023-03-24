@@ -11,8 +11,8 @@ using DataFrames
 using CSV
 using BayesScoreCal
 
-# set to redo simulations
-use_cache = true
+# set to redo simulations (CACHE TOO LARGE TO ADD TO REPO)
+use_cache = false
 if use_cache
     data_cache = load_object("lotka-volterra-cache.jld2")
 
