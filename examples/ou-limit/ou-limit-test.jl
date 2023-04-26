@@ -6,7 +6,7 @@
 using Random
 using Turing
 using Turing: Variational
-using DataFrames
+import DataFrames: transform as dtransform, transform! as dtransform!, DataFrame, nrow
 import LinearAlgebra: PosDefException
 using Optim
 using BayesScoreCal
@@ -131,15 +131,15 @@ function testfun(ou::Normal, N::Int64, N_samples::Int64, vmultiplier::Float64, a
 
     
     # dataframe and add logD
-    df_approx_samples = transform(DataFrame(approx_samples), :D => vlog => :logD)
-    df_true_samples = transform(DataFrame(true_samples), :D => vlog => :logD)
-    transform!(df_approx_samples, :D => vlog => :logD)
-    transform!(df_true_samples, :D => vlog => :logD)
+    df_approx_samples = dtransform(DataFrame(approx_samples), :D => vlog => :logD)
+    df_true_samples = dtransform(DataFrame(true_samples), :D => vlog => :logD)
+    dtransform!(df_approx_samples, :D => vlog => :logD)
+    dtransform!(df_true_samples, :D => vlog => :logD)
 
     caldist = df_approx_samples[sample(1:nrow(df_approx_samples), N_importance), :]
-    transform!(caldist, :μ => rescaler(vmultiplier), :μ)
-    transform!(caldist, :logD => rescaler(vmultiplier), :logD)
-    transform!(caldist, :logD => vexp => :D, :logD)
+    dtransform!(caldist, :μ => rescaler(vmultiplier), :μ)
+    dtransform!(caldist, :logD => rescaler(vmultiplier), :logD)
+    dtransform!(caldist, :logD => vexp => :D, :logD)
 
     calpoints = [collect(values(rw[[:logD,:μ]])) for rw in eachrow(caldist)]
 
@@ -162,8 +162,8 @@ function testfun(ou::Normal, N::Int64, N_samples::Int64, vmultiplier::Float64, a
     for t in eachindex(newx) #
 
         amod_newx = approxmodel(newx[t])
-        newx_samples = transform(DataFrame(sample(amod_newx, NUTS(n_adapt, 0.65), N_samples)), :D => vlog => :logD)
-        transform!(newx_samples, :D => vlog => :logD)
+        newx_samples = dtransform(DataFrame(sample(amod_newx, NUTS(n_adapt, 0.65), N_samples)), :D => vlog => :logD)
+        dtransform!(newx_samples, :D => vlog => :logD)
         downsampleid = sample(1:nrow(newx_samples), N_energy)
         
         tr_appmod_samples[:,t] = [collect(values(newx_samples[rw, params])) for rw in downsampleid]
