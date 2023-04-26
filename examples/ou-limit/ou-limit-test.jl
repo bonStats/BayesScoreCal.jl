@@ -8,7 +8,6 @@ using Turing
 using Turing: Variational
 using DataFrames
 import LinearAlgebra: PosDefException
-using Bijectors
 using Optim
 using BayesScoreCal
 
@@ -240,7 +239,7 @@ options = Optim.Options(f_tol = 0.00001)
 rr = testfun(ou, N, N_samples, vmultiplier, alphalevels, 1, options)
 
 
-allres = testfun.([ou], [N], [N_samples], [vmultiplier], [alphalevels], 1:reps, options)
+allres = testfun.([ou], [N], [N_samples], [vmultiplier], [alphalevels], 1:reps, [options])
 
 #results
 allres = vcat(reduce(vcat, allres)...)
