@@ -143,7 +143,7 @@ select_approx_samples = getsamples(ch_approx, :pars, N_importance)
 
 # sample calibration points
 if !use_cache
-    cal_points = inv(bij).(multiplyscale(bij.(select_approx_samples), vmultiplier))
+    cal_points = inverse(bij).(multiplyscale(bij.(select_approx_samples), vmultiplier))
 
     # newx approx models: pre-allocate
     tr_approx_samples_newx = SharedArray{Float64}(length(cal_points[1]), N_energy, N_importance)
@@ -190,7 +190,7 @@ cal = Calibration(tr_cal_points, tr_approx_samples_newx)
 
 d = BayesScoreCal.dimension(cal)[1]
 tf = CholeskyAffine(d)
-M = inv(Diagonal(std(cal.μs)))
+M = inverse(Diagonal(std(cal.μs)))
 res = energyscorecalibrate!(tf, cal, is_weights, scaling = M, penalty = (0.0, 0.05))
 
 calcheck_approx = coverage(cal, checkprobs)
@@ -202,7 +202,7 @@ rmse(cal,tf)
 
 approx_samples = vec(getsamples(ch_approx, :pars))
 tr_approx_samples = bij.(approx_samples)
-tf_samples = inv(bij).(tf.(tr_approx_samples, [mean(tr_approx_samples)]))
+tf_samples = inverse(bij).(tf.(tr_approx_samples, [mean(tr_approx_samples)]))
 
 [mean(tf_samples) std(tf_samples)]
 

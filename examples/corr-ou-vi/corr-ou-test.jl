@@ -109,7 +109,7 @@ function testfun(ou::MvNormal, T::Float64, N::Int64, N_importance::Int64, N_samp
     advi = ADVI(10, 1000)
     q_approx = vi(mod, advi)
     approx_samples = vrand(q_approx, N_samples)
-    tr_approx_samples = inv(q_approx.transform).(approx_samples)
+    tr_approx_samples = inverse(q_approx.transform).(approx_samples)
 
     # calibration posterior (scale by vmultiplier on underlying transformed space)
     q_cal = transformed(
@@ -119,7 +119,7 @@ function testfun(ou::MvNormal, T::Float64, N::Int64, N_importance::Int64, N_samp
     
     # sample calibration points
     cal_points = vrand(q_cal, N_importance)
-    tr_cal_points = inv(q_cal.transform).(cal_points)
+    tr_cal_points = inverse(q_cal.transform).(cal_points)
 
     # log prior evaluated on importance distribution samples
     ℓprior = [logprior(mod, par2tuple(v)) for (i, v) in enumerate(cal_points)]
