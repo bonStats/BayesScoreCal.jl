@@ -21,15 +21,14 @@ length(::CholeskyAffine{N,T}) where {N,T} = N # for internal use (within Cholesk
 nparam(::CholeskyAffine{N,T}) where {N,T} = N*(N + 3)/2 # number of params
 
 # for update! CholeskyAffine may not have same type as other arguments (e.g. Float64 -> Dual)
-function update!(chaf::CholeskyAffine, vL::Vector{T}, b::Vector{T}) where {T<:Real} 
-    chaf = CholeskyAffine(vec2chol(vL), b)
-    return chaf
+function update!(chaf::CholeskyAffine{N,T}, vL::Vector{T}, b::Vector{T}) where {N,T<:Real} 
+    chaf.L .= vec2chol(vL)
+    chaf.b .= b
 end
 
-function update!(chaf::CholeskyAffine, vLb::Vector{T}) where {T<:Real} 
-    n = length(chaf)
-    return update!(chaf, vLb[1:(end-n)], vLb[(end-n+1):end])
-end
+update!(chaf::CholeskyAffine{N,T}, vLb::Vector{T}) where {N,T<:Real} = update!(chaf, vLb[1:(end-N)], vLb[(end-N+1):end])
+
+maketransform(::CholeskyAffine{N,Ti}, vLb::Vector{To}) where {N,Ti<:Real,To<:Real} = CholeskyAffine(vLb, N)
 
 scaleparamvec(tf::CholeskyAffine) = chol2vec(tf.L)
 biasparamvec(tf::CholeskyAffine) = tf.b
