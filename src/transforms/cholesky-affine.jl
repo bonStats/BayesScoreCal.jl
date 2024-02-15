@@ -36,6 +36,6 @@ biasparamvec(tf::CholeskyAffine) = tf.b
 paramvec(tf::CholeskyAffine) = [chol2vec(tf.L); tf.b]
 
 # for  (::CholeskyAffine) may not have same type as input (e.g. Float64 -> Dual)
-(chaf::CholeskyAffine)(x::T, μs::T) where {T<:Real} = chaf.L * (x - μs) + μs + chaf.b 
+(chaf::CholeskyAffine)(x::T, μs::T) where {T} = chaf.L * (x - μs) + μs + chaf.b 
 
-(chaf::CholeskyAffine)(cal::Calibration{T}) where {T<:Real} = Calibration(cal.values, hcat([chaf.(clm, [cal.μs[i]]) for (i, clm) in enumerate(eachcol(cal.samples))]...))
+(chaf::CholeskyAffine)(cal::Calibration{T}) where {T} = Calibration(cal.values, hcat([chaf.(clm, [cal.μs[i]]) for (i, clm) in enumerate(eachcol(cal.samples))]...))
