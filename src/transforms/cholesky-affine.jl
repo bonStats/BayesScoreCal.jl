@@ -1,9 +1,9 @@
 include("pd-chol-helper.jl")
 
 mutable struct CholeskyAffine{N} <: Transform{N}
-    L::LowerTriangular
-    b::Vector{<:Real}
-    function CholeskyAffine(L::LowerTriangular, b::Vector{<:Real})
+    L::LowerTriangular{Real, Matrix{Real}}
+    b::Vector{Real}
+    function CholeskyAffine(L::LowerTriangular{<:Real, Matrix{<:Real}}, b::Vector{<:Real})
         @assert length(b) == size(L, 1)
         new{length(b)}(L, b)
     end
@@ -21,15 +21,15 @@ length(::CholeskyAffine{N}) where {N} = N # for internal use (within CholeskyAff
 nparam(::CholeskyAffine{N}) where {N} = N*(N + 3)/2 # number of params
 
 function update!(chaf::CholeskyAffine, vL::Vector{<:Real}, b::Vector{<:Real})
-    chaf.L = vec2chol(vL)
-    chaf.b = b
+    chaf.L .= vec2chol(vL)
+    chaf.b .= b
     return chaf
 end
 
 function update!(chaf::CholeskyAffine, vLb::Vector{<:Real})
     n = length(chaf)
-    chaf.L = vec2chol(vLb[1:(end-n)])
-    chaf.b = vLb[(end-n+1):end]
+    chaf.L .= vec2chol(vLb[1:(end-n)])
+    chaf.b .= vLb[(end-n+1):end]
     return chaf
 end
 
