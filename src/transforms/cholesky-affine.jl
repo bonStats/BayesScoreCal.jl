@@ -20,7 +20,7 @@ dimension(::CholeskyAffine{N,T}) where {N,T} = (N,) # object dimension
 length(::CholeskyAffine{N,T}) where {N,T} = N # for internal use (within CholeskyAffine functions)
 nparam(::CholeskyAffine{N,T}) where {N,T} = N*(N + 3)/2 # number of params
 
-# for update! CholeskyAffine may not have same type (e.g. Float64 -> Dual)
+# for update! CholeskyAffine may not have same type as other arguments (e.g. Float64 -> Dual)
 function update!(chaf::CholeskyAffine, vL::Vector{T}, b::Vector{T}) where {T<:Real} 
     chaf = CholeskyAffine(vec2chol(vL), b)
     return chaf
@@ -35,6 +35,7 @@ scaleparamvec(tf::CholeskyAffine) = chol2vec(tf.L)
 biasparamvec(tf::CholeskyAffine) = tf.b
 paramvec(tf::CholeskyAffine) = [chol2vec(tf.L); tf.b]
 
-(chaf::CholeskyAffine{N,T})(x::T, μs::T) where {N,T<:Real} = chaf.L * (x - μs) + μs + chaf.b 
+# for  (::CholeskyAffine) may not have same type as input (e.g. Float64 -> Dual)
+(chaf::CholeskyAffine)(x::T, μs::T) where {T<:Real} = chaf.L * (x - μs) + μs + chaf.b 
 
-(chaf::CholeskyAffine{N,T})(cal::Calibration{T}) where {N,T<:Real} = Calibration(cal.values, hcat([chaf.(clm, [cal.μs[i]]) for (i, clm) in enumerate(eachcol(cal.samples))]...))
+(chaf::CholeskyAffine)(cal::Calibration{T}) where {T<:Real} = Calibration(cal.values, hcat([chaf.(clm, [cal.μs[i]]) for (i, clm) in enumerate(eachcol(cal.samples))]...))
