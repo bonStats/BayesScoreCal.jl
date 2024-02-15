@@ -15,9 +15,9 @@ expdiag(v::Real, i::Int64, j::Int64) = i==j ? exp(v) : v
 
 Convert a unconstrained vector v to lower-triangular cholesky decomposition of (n x n) positive definite matrix.
 """
-function vec2chol(v::Vector{<:Real}, n::Int64)
+function vec2chol(v::Vector{T}, n::Int64) where {T<:Real}
     k = 0
-    LowerTriangular([ j<=i ? (k+=1; expdiag(v[k], i , j)) : 0.0 for i=1:n, j=1:n ])
+    LowerTriangular([ j<=i ? (k+=1; expdiag(v[k], i , j)) : zero(T) for i=1:n, j=1:n ])
 end
 
 vec2chol(v::Vector{<:Real}) = vec2chol(v, cholsize(v))
