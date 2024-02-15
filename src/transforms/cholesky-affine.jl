@@ -28,7 +28,7 @@ end
 
 function update!(chaf::CholeskyAffine, vLb::Vector{T}) where {T<:Real} 
     n = length(chaf)
-    return update!(chaf,  vec2chol(vLb[1:(end-n)]), vLb[(end-n+1):end])
+    return update!(chaf, vLb[1:(end-n)], vLb[(end-n+1):end])
 end
 
 scaleparamvec(tf::CholeskyAffine) = chol2vec(tf.L)
