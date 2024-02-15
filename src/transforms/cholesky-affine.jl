@@ -3,7 +3,7 @@ include("pd-chol-helper.jl")
 mutable struct CholeskyAffine{N} <: Transform{N}
     L::LowerTriangular{Real, Matrix{Real}}
     b::Vector{Real}
-    function CholeskyAffine(L::LowerTriangular{<:Real, Matrix{<:Real}}, b::Vector{<:Real})
+    function CholeskyAffine(L::LowerTriangular{T, Matrix{T}}, b::Vector{T}) where T<:Real
         @assert length(b) == size(L, 1)
         new{length(b)}(L, b)
     end
