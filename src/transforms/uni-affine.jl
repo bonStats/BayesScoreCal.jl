@@ -1,6 +1,10 @@
-mutable struct UnivariateAffine <: Transform{1}
-    σ::Real
-    b::Real
+mutable struct UnivariateAffine{T<:Real} <: Transform{1}
+    σ::T
+    b::T
+end
+
+function UnivariateAffine(v::Vector{T}) where {T<:Real}
+    UnivariateAffine(exp(v[1]),v[2])
 end
 
 function UnivariateAffine()
@@ -11,17 +15,15 @@ dimension(::UnivariateAffine) = () # object dimension
 length(::UnivariateAffine) = 1 # for internal use (within CholeskyAffine functions)
 nparam(::UnivariateAffine) = 2 # number of params
 
-function update!(uaf::UnivariateAffine, logσ::Real, b::Real)
+function update!(uaf::UnivariateAffine{T}, logσ::T, b::T) where {T<:Real}
     uaf.σ = exp(logσ)
     uaf.b = b
     return uaf
 end
 
-function update!(uaf::UnivariateAffine, v::Vector{<:Real})
-    uaf.σ = exp(v[1])
-    uaf.b = v[2]
-    return uaf
-end
+update!(uaf::UnivariateAffine{T}, v::Vector{T}) where {T<:Real} = update!(uaf, exp(v[1]), v[2])
+
+maketransform(::UnivariateAffine{Ti}, v::Vector{To}) where {Ti<:Real,To<:Real} = UnivariateAffine(v)
 
 scaleparamvec(tf::UnivariateAffine) = log(tf.σ)
 biasparamvec(tf::UnivariateAffine) = tf.b
