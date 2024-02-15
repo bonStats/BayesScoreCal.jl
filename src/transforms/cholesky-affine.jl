@@ -20,12 +20,13 @@ dimension(::CholeskyAffine{N,T}) where {N,T} = (N,) # object dimension
 length(::CholeskyAffine{N,T}) where {N,T} = N # for internal use (within CholeskyAffine functions)
 nparam(::CholeskyAffine{N,T}) where {N,T} = N*(N + 3)/2 # number of params
 
-function update!(chaf::CholeskyAffine{N,T}, vL::Vector{T}, b::Vector{T}) where {N, T<:Real} 
+# for update! CholeskyAffine may not have same type (e.g. Float64 -> Dual)
+function update!(chaf::CholeskyAffine, vL::Vector{T}, b::Vector{T}) where {T<:Real} 
     chaf = CholeskyAffine(vec2chol(vL), b)
     return chaf
 end
 
-function update!(chaf::CholeskyAffine{N,T}, vLb::Vector{T}) where {N, T<:Real} 
+function update!(chaf::CholeskyAffine, vLb::Vector{T}) where {T<:Real} 
     n = length(chaf)
     return update!(chaf,  vec2chol(vLb[1:(end-n)]), vLb[(end-n+1):end])
 end
