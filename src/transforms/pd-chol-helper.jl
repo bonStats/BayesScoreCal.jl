@@ -65,4 +65,4 @@ chol2varvec(L::LowerTriangular) = [log(col[i]) for (i, col) in enumerate(eachcol
 
 Convert a lower-triangular cholesky decomposition to the off diagonal unconstrained vector v of CORRELATIONS. 
 """
-chol2corrvec(L::LowerTriangular) = vcat( [col[(i+1):end] ./ col[i] for (i, col) in enumerate(eachcol(L))]... )
+chol2covvec(L::LowerTriangular) = vcat( [col[(i+1):end] for (i, col) in enumerate(eachcol(L))]... )

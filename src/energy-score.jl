@@ -31,7 +31,7 @@ function negenergyscore(tf::Transform, cal::Calibration, weights::Vector{Float64
         nesval += weights[j] * score(tfsample, cal.values[j], perm, β, sM)
     end
 
-    return nesval + penalty[1] * sum(biasparamvec(tf) .^2) + penalty[2] * sum(scaleparamvec(tf) .^ 2) + penalty[3] * sum(corrparamvec(tf) .^ 2) 
+    return nesval + penalty[1] * sum(biasparamvec(tf) .^2) + penalty[2] * sum(scaleparamvec(tf) .^ 2) + penalty[3] * sum(covparamvec(tf) .^ 2) 
     
 end
 
@@ -48,7 +48,7 @@ Finds parameters of transform `tf` using Bayesian Score Calibration.
 # Optional arguments
 - `β::Real = 1.0`: Energy score parameter β ∈ (0,2).
 - `scaling = I`: Scaling matrix to rescale parameters.
-- `penalty::Tuple{Float64,Float64,Float64} = (0.0,0.0,0.0)`: Penalty terms for (bias, variance, correlation).
+- `penalty::Tuple{Float64,Float64,Float64} = (0.0,0.0,0.0)`: Penalty terms for (bias, variance, covariance [off-diagonal]).
 - `options::Optim.Options = Optim.Options()`: Options to give to `Optim`.
 
 """

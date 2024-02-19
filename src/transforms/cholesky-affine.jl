@@ -30,7 +30,7 @@ update!(chaf::CholeskyAffine{N,T}, vLb::Vector{T}) where {N,T<:Real} = update!(c
 
 maketransform(::CholeskyAffine{N,Ti}, vLb::Vector{To}) where {N,Ti<:Real,To<:Real} = CholeskyAffine(vLb, N)
 
-corrparamvec(tf::CholeskyAffine) = chol2corrvec(tf.L)
+covparamvec(tf::CholeskyAffine) = chol2covvec(tf.L)
 scaleparamvec(tf::CholeskyAffine) = chol2varvec(tf.L)
 biasparamvec(tf::CholeskyAffine) = tf.b
 paramvec(tf::CholeskyAffine) = [chol2vec(tf.L); tf.b]
