@@ -25,6 +25,7 @@ update!(uaf::UnivariateAffine{T}, v::Vector{T}) where {T<:Real} = update!(uaf, e
 
 maketransform(::UnivariateAffine{Ti}, v::Vector{To}) where {Ti<:Real,To<:Real} = UnivariateAffine(v)
 
+corrparamvec(tf::UnivariateAffine) = 0.0
 scaleparamvec(tf::UnivariateAffine) = log(tf.σ)
 biasparamvec(tf::UnivariateAffine) = tf.b
 paramvec(tf::UnivariateAffine) = [tf.σ; tf.b]
