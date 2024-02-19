@@ -1,7 +1,7 @@
 name = "BayesScoreCal"
 uuid = "986b08a2-df14-4163-beea-1d3f6d344e0b"
 authors = ["Joshua J Bon"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Intervals = "d8418881-c3e1-53bb-8760-2df7ec849ed5"

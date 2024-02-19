@@ -59,11 +59,10 @@ function energyscorecalibrate!(tf::T, cal::Calibration, weights::Vector{Float64}
     perm = PermuteVector(nsamples(cal))
     initialx = paramvec(tf)
 
-    f = OnceDifferentiable((x) -> negenergyscore(update!(tf,x), cal, weights, perm, β, scaling, penalty), initialx; autodiff = :forward)
+    f = OnceDifferentiable((x) -> negenergyscore(maketransform(tf,x), cal, weights, perm, β, scaling, penalty), initialx; autodiff = :forward)
 
     res = Optim.optimize(f, initialx, BFGS(), options)
     
-    # neccesary?
     update!(tf, Optim.minimizer(res))
 
     return res
