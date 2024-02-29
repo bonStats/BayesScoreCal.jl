@@ -31,7 +31,7 @@ function negenergyscore(tf::Transform, cal::Calibration, weights::Vector{Float64
         nesval += weights[j] * score(tfsample, cal.values[j], perm, β, sM)
     end
 
-    return nesval + penalty[1] * sum(biasparamvec(tf) .^2) + penalty[2] * sum(scaleparamvec(tf) .^ 2) + penalty[3] * sum(covparamvec(tf) .^ 2) 
+    return nesval + penalty[1] * idpenalty(tf) + penalty[2] * corrpenalty(tf) + penalty[3] * scalepenalty(tf) 
     
 end
 
