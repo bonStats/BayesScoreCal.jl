@@ -13,6 +13,7 @@ include("calibration.jl")
 include("energy-score.jl")
 include("diagnostics.jl")
 include("transforms/abstract-transform.jl")
+include("transforms/eigen-affine.jl")
 include("transforms/cholesky-affine.jl")
 include("transforms/uni-affine.jl")
 
