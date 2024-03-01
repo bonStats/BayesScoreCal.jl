@@ -5,16 +5,17 @@ mutable struct EigenAffine{N,T<:Real} <: Transform{N}
     d::Vector{T} # d = √D
     V::Matrix{T}
     b::Vector{T}
-    function EigenAffine(d::Vector{T}, V::Matrix{T}, b::Vector{T}) where {T<:Real}
+    dmin::Float64
+    function EigenAffine(d::Vector{T}, V::Matrix{T}, b::Vector{T}, dmin::Float64) where {T<:Real}
         @assert length(b) == length(d) == size(V,1) == size(V,2)
-        new{length(b),T}(d, V, b)
+        new{length(b),T}(d, V, b, dmin)
     end
 end
 
-EigenAffine(v::Vector{<:Real}, N::Int64) = EigenAffine(exp.(v[1:N]), vec2matposdiag(v[(N+1):(end-N)], N), v[(end-N+1):end])
-function EigenAffine(N::Int64)
+EigenAffine(v::Vector{<:Real}, N::Int64, dmin::Float64) = EigenAffine(exp.(v[1:N]), vec2matposdiag(v[(N+1):(end-N)], N), v[(end-N+1):end], dmin)
+function EigenAffine(N::Int64, dmin::Float64 = 0.0)
     par_zero = zeros(Int( N * (N + 2) ))
-    EigenAffine(par_zero, N)
+    EigenAffine(par_zero, N, dmin)
 end
 
 
@@ -31,7 +32,7 @@ end
 
 update!(tf::EigenAffine{N,T}, v::Vector{T}) where {N,T<:Real} = update!(tf, exp.(v[1:N]), vec2matposdiag(v[(N+1):(end-N)], N), v[(end-N+1):end])
 
-maketransform(::EigenAffine{N,Ti}, v::Vector{To}) where {N,Ti<:Real,To<:Real} = EigenAffine(v, N)
+maketransform(tf::EigenAffine{N,Ti}, v::Vector{To}) where {N,Ti<:Real,To<:Real} = EigenAffine(v, N, tf.dmin)
 
 idpenalty(tf::EigenAffine) = sum((tf.V * tf.V' - I) .^ 2) # for identifability of parameters
 corrpenalty(tf::EigenAffine) = sum((tf.V - I) .^ 2)
@@ -40,4 +41,4 @@ scalepenalty(tf::EigenAffine) = sum(tf.d .^ 2)
 paramvec(tf::EigenAffine{N,T}) where {N,T<:Real} = [log.(tf.d); matposdiag2vec(tf.V, N); tf.b]
 
 # for  (::EigenAffine) may not have same type as input (e.g. Float64 -> Dual)
-(tf::EigenAffine)(x::T, μs::T) where {T} = tf.V * ( tf.d .* (x - μs)) + μs + tf.b 
+(tf::EigenAffine)(x::T, μs::T) where {T} = tf.V * ( (tf.d .+ tf.dmin) .* (x - μs)) + μs + tf.b
