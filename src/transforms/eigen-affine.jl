@@ -36,7 +36,7 @@ maketransform(tf::EigenAffine{N,Ti}, v::Vector{To}) where {N,Ti<:Real,To<:Real} 
 
 idpenalty(tf::EigenAffine) = sum((tf.V * tf.V' - I) .^ 2) # for identifability of parameters
 corrpenalty(tf::EigenAffine) = sum((tf.V - I) .^ 2)
-scalepenalty(tf::EigenAffine) = sum(tf.d .^ 2)
+scalepenalty(tf::EigenAffine) = sum((tf.d .+ (tf.dmin - 1)) .^ 2)
 
 paramvec(tf::EigenAffine{N,T}) where {N,T<:Real} = [log.(tf.d); matposdiag2vec(tf.V, N); tf.b]
 
