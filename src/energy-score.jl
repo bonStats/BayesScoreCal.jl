@@ -21,7 +21,7 @@ end
 score(sample::Vector{S}, value::T, perm::PermuteVector, β::Real, s::T) where {S <: Real, T<: Real} = score(s .* sample, s * value, perm, β)
 score(sample::Vector{S}, value::T, perm::PermuteVector, β::Real, s::UniformScaling{Bool}) where {S <: Real, T<: Real} = score(sample, value, perm, β)
 
-function negenergyscore(tf::Transform, cal::Calibration, weights::Vector{Float64}, perm::PermuteVector, β::Real, sM::Union{AbstractMatrix,UniformScaling}, penalty::Tuple{Float64, Float64})
+function negenergyscore(tf::Transform, cal::Calibration, weights::Vector{Float64}, perm::PermuteVector, β::Real, sM::Union{AbstractMatrix,UniformScaling}, penalty::Tuple{Float64, Float64, Float64})
     
     nesval = 0.0
 
@@ -31,12 +31,12 @@ function negenergyscore(tf::Transform, cal::Calibration, weights::Vector{Float64
         nesval += weights[j] * score(tfsample, cal.values[j], perm, β, sM)
     end
 
-    return nesval + penalty[1] * sum(biasparamvec(tf) .^2) + penalty[2] * sum(scaleparamvec(tf) .^ 2) 
+    return nesval + penalty[1] * idpenalty(tf) + penalty[2] * corrpenalty(tf) + penalty[3] * scalepenalty(tf) 
     
 end
 
 """
-    energyscorecalibrate!(tf::T, cal::Calibration, weights::Vector{Float64}; β::Real = 1.0, scaling = I, penalty::Tuple{Float64,Float64} = (0.0,0.0), options::Optim.Options = Optim.Options()) where {T<:Transform}
+    energyscorecalibrate!(tf::T, cal::Calibration, weights::Vector{Float64}; β::Real = 1.0, scaling = I, penalty::Tuple{Float64,Float64,Float64} = (0.0,0.0,0.0), options::Optim.Options = Optim.Options()) where {T<:Transform}
 
 Finds parameters of transform `tf` using Bayesian Score Calibration.
 
@@ -48,11 +48,11 @@ Finds parameters of transform `tf` using Bayesian Score Calibration.
 # Optional arguments
 - `β::Real = 1.0`: Energy score parameter β ∈ (0,2).
 - `scaling = I`: Scaling matrix to rescale parameters.
-- `penalty::Tuple{Float64,Float64} = (0.0,0.0)`: Penalty terms for (bias, variance).
+- `penalty::Tuple{Float64,Float64,Float64} = (0.0,0.0,0.0)`: Penalty terms for (bias, variance, covariance [off-diagonal]).
 - `options::Optim.Options = Optim.Options()`: Options to give to `Optim`.
 
 """
-function energyscorecalibrate!(tf::T, cal::Calibration, weights::Vector{Float64}; β::Real = 1.0, scaling = I, penalty::Tuple{Float64,Float64} = (0.0,0.0), options::Optim.Options = Optim.Options()) where {T<:Transform}
+function energyscorecalibrate!(tf::T, cal::Calibration, weights::Vector{Float64}; β::Real = 1.0, scaling = I, penalty::Tuple{Float64,Float64,Float64} = (0.0,0.0,0.0), options::Optim.Options = Optim.Options()) where {T<:Transform}
 
     @assert dimension(tf) == dimension(cal)
 

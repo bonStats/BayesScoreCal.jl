@@ -51,3 +51,18 @@ vecsize(L::LowerTriangular) = Int( size(L,1) * (size(L,1) + 1) / 2 )
 Convert a lower-triangular cholesky decomposition to unconstrained vector v. 
 """
 chol2vec(L::LowerTriangular) = vcat( [[log(col[i]);col[(i+1):end]] for (i, col) in enumerate(eachcol(L))]... )
+
+"""
+    chol2varvec(L::LowerTriangular)
+
+Convert a lower-triangular cholesky decomposition to the diagonal unconstrained vector v. 
+"""
+chol2varvec(L::LowerTriangular) = [log(col[i]) for (i, col) in enumerate(eachcol(L))]
+
+
+"""
+    chol2corrvec(L::LowerTriangular)
+
+Convert a lower-triangular cholesky decomposition to the off diagonal unconstrained vector v of CORRELATIONS. 
+"""
+chol2covvec(L::LowerTriangular) = vcat( [col[(i+1):end] for (i, col) in enumerate(eachcol(L))]... )

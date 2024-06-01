@@ -25,10 +25,10 @@ update!(uaf::UnivariateAffine{T}, v::Vector{T}) where {T<:Real} = update!(uaf, e
 
 maketransform(::UnivariateAffine{Ti}, v::Vector{To}) where {Ti<:Real,To<:Real} = UnivariateAffine(v)
 
-scaleparamvec(tf::UnivariateAffine) = log(tf.σ)
-biasparamvec(tf::UnivariateAffine) = tf.b
+idpenalty(tf::UnivariateAffine) = 0.0
+corrpenalty(tf::UnivariateAffine) = 0.0
+scalepenalty(tf::UnivariateAffine) = log(tf.σ) ^ 2
+
 paramvec(tf::UnivariateAffine) = [tf.σ; tf.b]
 
-(uaf::UnivariateAffine)(x::T, μs::T) where {T<:Real} = uaf.σ * (x - μs) + μs + uaf.b 
-
-(uaf::UnivariateAffine)(cal::Calibration{T}) where {T<:Real} = Calibration(cal.values, hcat([uaf.(clm, [cal.μs[i]]) for (i, clm) in enumerate(eachcol(cal.samples))]...))
+(uaf::UnivariateAffine)(x::T, μs::T) where {T<:Real} = uaf.σ * (x - μs) + μs + uaf.b
